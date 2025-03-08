@@ -20,5 +20,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('agendamentos.urls')),  # Incluindo as rotas do app 'agendamentos'
+    path('', include('agendamento.urls')),  # Incluindo as rotas do app 'agendamentos'
+    path('', include('cliente.urls')),  # Incluindo as rotas do app 'cliente'
+    path('', include('servico.urls')),  # Incluindo as rotas do app 'servico'
+    path('', include('profissional.urls')),  # Incluindo as rotas do app 'profissional'
+
 ]
+
+
+
