@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Aplicações criadas
-    'agendamento',
-    'cliente',
-    'profissional',
-    'servico',
+    'apps.agendamento',
+    'apps.cliente',
+    'apps.profissional',
+    'apps.servico',
 ]
 
 MIDDLEWARE = [

@@ -20,10 +20,10 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('agendamento.urls')),  # Incluindo as rotas do app 'agendamentos'
-    path('', include('cliente.urls')),  # Incluindo as rotas do app 'cliente'
-    path('', include('servico.urls')),  # Incluindo as rotas do app 'servico'
-    path('', include('profissional.urls')),  # Incluindo as rotas do app 'profissional'
+    path('', include('apps.agendamento.urls')),  # Incluindo as rotas do app 'agendamentos'
+    path('', include('apps.cliente.urls')),  # Incluindo as rotas do app 'cliente'
+    path('', include('apps.servico.urls')),  # Incluindo as rotas do app 'servico'
+    path('', include('apps.profissional.urls')),  # Incluindo as rotas do app 'profissional'
 
 ]
 

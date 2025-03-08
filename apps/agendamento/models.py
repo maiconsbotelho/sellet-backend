@@ -1,7 +1,8 @@
 from django.db import models
-from cliente.models import Cliente
-from profissional.models import Profissional
-from servico.models import Servico
+
+from apps.cliente.models import Cliente
+from apps.profissional.models import Profissional
+from apps.servico.models import Servico
 
 class Agendamento(models.Model):
     PENDENTE = 'pendente'

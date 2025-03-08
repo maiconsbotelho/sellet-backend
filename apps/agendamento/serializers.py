@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Agendamento
-from servico.models import Servico
+from apps.servico.models import Servico
 
 
 
