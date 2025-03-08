@@ -4,12 +4,12 @@ from .views import ClienteViewSet
 
 # Crie um roteador para registrar as views
 router = DefaultRouter()
-router.register(r'clientes', ClienteViewSet)
+router.register(r'', ClienteViewSet)
 
 
 # Inclua as URLs geradas pelo roteador
 urlpatterns = [
-    path('api/', include(router.urls)),  # Prefixo 'api/' para as rotas da API
+    path('', include(router.urls)),  # Prefixo 'api/' para as rotas da API
 ]
 
 

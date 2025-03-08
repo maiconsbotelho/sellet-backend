@@ -4,9 +4,9 @@ from .views import ServicoViewSet
 
 # Crie um roteador para registrar as views
 router = DefaultRouter()
-router.register(r'servicos', ServicoViewSet)
+router.register(r'', ServicoViewSet)
 
 # Inclua as URLs geradas pelo roteador
 urlpatterns = [
-    path('api/', include(router.urls)),  # Prefixo 'api/' para as rotas da API
+    path('', include(router.urls)),  # Prefixo 'api/' para as rotas da API
 ]
