@@ -2,9 +2,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import ClienteViewSet
 
-# Crie um roteador para registrar as views
-router = DefaultRouter()
-router.register(r'', ClienteViewSet)
+
+router = DefaultRouter() # Crie um roteador para registrar as views
+router.register(r'', ClienteViewSet) # Registre a view de cliente
 
 
 # Inclua as URLs geradas pelo roteador
