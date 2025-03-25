@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import Agendamento
 from .serializers import AgendamentoSerializer
-from .permissions import IsProfissionalOrAdmin
+from usuarios.permissions import IsProfissionalOrAdmin
 
 class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()

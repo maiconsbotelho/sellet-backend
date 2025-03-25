@@ -11,6 +11,7 @@ class UserType(models.TextChoices):
 class UserProfile(AbstractUser):
     # Campos adicionais
     telefone = models.CharField(max_length=15, blank=True, null=True)
+    cpf = models.CharField(max_length=11, blank=True, null=True)
     foto_perfil = models.ImageField(upload_to='perfil/', blank=True, null=True)
     tipo_usuario = models.CharField(
         max_length=20,

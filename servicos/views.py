@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from .models import Servico
 from .serializers import ServicoSerializer
-from .permissions import IsProfissionalOrAdmin  # Permissões específicas para profissionais e administradores
+from usuarios.permissions import IsProfissionalOrAdmin
+
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()

@@ -20,3 +20,12 @@ class IsCliente(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj == request.user
+    
+class IsProfissionalOrAdmin(BasePermission):
+    """
+    Permite acesso apenas a usuários que são profissionais ou administradores.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.tipo_usuario in ['profissional', 'administrador']
+

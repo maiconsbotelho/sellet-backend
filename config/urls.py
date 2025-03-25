@@ -13,11 +13,12 @@ from django.urls import path, include
 # meu_projeto/urls.py
 
 urlpatterns = [
-    # Outras URLs da sua API
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint para obter o token
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),  # Endpoint para atualizar o token
     path('admin/', admin.site.urls),
     path('api/', include('usuarios.urls')),
     path('api/', include('servicos.urls')), 
     path('api/', include('agendamentos.urls')),
+
+    # Outras URLs da sua API
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint para obter o token
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),  # Endpoint para atualizar o token
 ]
