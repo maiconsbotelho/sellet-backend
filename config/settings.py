@@ -41,12 +41,12 @@ INSTALLED_APPS = [
 
     # Rest Framework
     'rest_framework',
+    'rest_framework.authtoken',
 
     # Aplicações criadas
-    'apps.agendamento',
-    'apps.cliente',
-    'apps.profissional',
-    'apps.servico',
+    'usuarios',
+    'servicos',
+    'agendamentos',
 ]
 
 MIDDLEWARE = [
@@ -144,4 +144,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # URL do seu frontend
 ]
+
+# ADICIONADOS POR MIM *******************************
+# meu_projeto/settings.py
+
+AUTH_USER_MODEL = 'usuarios.UserProfile'
+
+# meu_projeto/settings.py
+# meu_projeto/settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Usando JWT
+    ),
+}
 
