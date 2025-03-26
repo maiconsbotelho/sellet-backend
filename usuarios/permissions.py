@@ -3,11 +3,11 @@ from rest_framework.permissions import BasePermission
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user.tipo_usuario == 'administrador'
+        return request.user.is_superuser or request.user.tipo_usuario == 'administrador'
 
 class IsProfissional(BasePermission):
     def has_permission(self, request, view):
-        return request.user.tipo_usuario == 'profissional'
+        return request.user.is_superuser or request.user.tipo_usuario == 'profissional'
 
     def has_object_permission(self, request, view, obj):
         if view.action in ['update', 'partial_update']:
@@ -16,7 +16,7 @@ class IsProfissional(BasePermission):
 
 class IsCliente(BasePermission):
     def has_permission(self, request, view):
-        return request.user.tipo_usuario == 'cliente'
+        return request.user.is_superuser or request.user.tipo_usuario == 'cliente'
 
     def has_object_permission(self, request, view, obj):
         return obj == request.user
@@ -25,7 +25,6 @@ class IsProfissionalOrAdmin(BasePermission):
     """
     Permite acesso apenas a usuários que são profissionais ou administradores.
     """
-
     def has_permission(self, request, view):
-        return request.user.tipo_usuario in ['profissional', 'administrador']
+        return request.user.is_superuser or request.user.tipo_usuario in ['profissional', 'administrador']
 

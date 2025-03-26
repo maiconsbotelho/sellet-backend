@@ -12,6 +12,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """
         Define as permissões para as ações baseadas no tipo de usuário.
         """
+        # Permitir que superusuários realizem qualquer ação
+        if self.request.user.is_superuser:
+            return []
+
         if self.action == 'list':  # Visualizar todos os usuários
             return [IsAdmin()]
         
@@ -41,6 +45,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         veem apenas seus próprios perfis.
         """
         user = self.request.user
+
+        # Permitir que superusuários vejam todos os usuários
+        if user.is_superuser:
+            return UserProfile.objects.all()
+
         if user.tipo_usuario == 'admin':
             return UserProfile.objects.all()  # Administradores podem ver todos os usuários
         return UserProfile.objects.filter(id=user.id)  # Profissionais e clientes veem apenas seus próprios perfis
