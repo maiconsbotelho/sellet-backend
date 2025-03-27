@@ -3,6 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 from .models import UserProfile
 from .serializers import UserProfileSerializer
 from .permissions import IsAdmin, IsProfissional, IsCliente
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
