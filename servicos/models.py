@@ -6,11 +6,11 @@ class Servico(models.Model):
     descricao = models.TextField()
     duracao = models.IntegerField(help_text="Duração do serviço em minutos")
     preco = models.DecimalField(max_digits=8, decimal_places=2)  # Preço do serviço
-    profissional = models.ForeignKey(
+    profissionais = models.ManyToManyField(
         UserProfile,
-        on_delete=models.CASCADE,
         related_name="servicos_oferecidos",
-        limit_choices_to={'tipo_usuario': 'profissional'}  # Só pode ser um profissional
+        limit_choices_to={'tipo_usuario': 'profissional'},  # Apenas profissionais podem ser vinculados
+        blank=True  # Permite que o serviço seja criado sem profissionais inicialmente
     )
     
     def __str__(self):
