@@ -36,6 +36,7 @@ class Agendamento(models.Model):
             self.data_hora_agendamento = timezone.make_aware(datetime.combine(self.data, self.hora))
         super().save(*args, **kwargs)
 
+    @classmethod
     def pode_cancelar_agendamento(self):
         """
         Verifica se o agendamento pode ser cancelado.

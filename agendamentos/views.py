@@ -54,7 +54,7 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
         Valida se o agendamento pode ser cancelado.
         O cancelamento só pode ser feito até 24h antes do agendamento.
         """
-        if not pode_cancelar_agendamento(instance):
+        if not Agendamento.pode_cancelar_agendamento(instance):
             return Response(
                 {"detail": "O cancelamento só pode ser feito até 24h antes do agendamento."},
                 status=status.HTTP_400_BAD_REQUEST
