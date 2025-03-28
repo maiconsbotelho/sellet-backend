@@ -1,39 +1,5 @@
 from django.utils import timezone
 from datetime import datetime, timedelta
-from agendamentos.models import Agendamento
-
-def validar_agendamento(data, hora, profissional, cliente=None):
-    """
-    Valida os campos data e hora do agendamento:
-    - Verifica se a data e hora do agendamento são no futuro.
-    - Verifica se o horário já está ocupado para o mesmo profissional.
-    - Verifica se o horário já está ocupado para o cliente (caso o usuário seja cliente).
-    """
-    # Combine data e hora para formar o `data_hora_agendamento`
-    data_hora_agendamento = timezone.make_aware(datetime.combine(data, hora))
-
-    # Verifica se o agendamento está no futuro
-    if data_hora_agendamento <= timezone.now():
-        raise ValueError("A data e hora do agendamento devem ser no futuro.")
-
-    # Verifica se o horário já está ocupado para o mesmo profissional
-    if Agendamento.objects.filter(profissional=profissional, data_hora_agendamento=data_hora_agendamento).exists():
-        raise ValueError("Esse horário já está ocupado para o profissional. Escolha outro horário.")
-    
-    # Verifica se o horário já está ocupado para o cliente, apenas se for um cliente
-    if cliente and Agendamento.objects.filter(cliente=cliente, data_hora_agendamento=data_hora_agendamento).exists():
-        raise ValueError("Esse horário já está ocupado para o cliente. Escolha outro horário.")
-
-    return data_hora_agendamento
-
-def pode_cancelar_agendamento(agendamento: Agendamento) -> bool:
-    """
-    Verifica se o agendamento pode ser cancelado.
-    O cancelamento é permitido até 24h antes do agendamento.
-    """
-    if agendamento.data_hora_agendamento - timezone.now() > timedelta(hours=24):
-        return True
-    return False
 
 def associar_cliente_profissional(serializer, user, cliente_id=None, profissional_id=None):
     """
@@ -43,14 +9,55 @@ def associar_cliente_profissional(serializer, user, cliente_id=None, profissiona
     """
     if user.is_superuser or user.tipo_usuario == 'administrador':
         if not cliente_id or not profissional_id:
-            raise ValueError("Administrador deve fornecer cliente e profissional.")
+            raise ValueError("Administradores devem fornecer cliente e profissional.")
         serializer.save(cliente_id=cliente_id, profissional_id=profissional_id)
 
     elif user.tipo_usuario == 'cliente':
-        serializer.save(cliente=user)
+        if not profissional_id:
+            raise ValueError("Clientes devem fornecer o profissional.")
+        serializer.save(cliente=user, profissional_id=profissional_id)
 
     elif user.tipo_usuario == 'profissional':
         serializer.save(profissional=user)
 
     else:
         raise ValueError("Apenas administradores, profissionais e clientes podem criar agendamentos.")
+
+def calcular_data_hora_agendamento(data, hora):
+    """
+    Calcula o campo 'data_hora_agendamento' com base nos campos 'data' e 'hora'.
+    """
+    return timezone.make_aware(datetime.combine(data, hora))
+
+def obter_intervalo_hoje():
+    """
+    Retorna o intervalo de hoje (início e fim do dia).
+    """
+    today = timezone.now().date()
+    return today, today
+
+def obter_intervalo_ontem():
+    """
+    Retorna o intervalo de ontem (início e fim do dia).
+    """
+    yesterday = timezone.now().date() - timedelta(days=1)
+    return yesterday, yesterday
+
+def obter_intervalo_semana_atual():
+    """
+    Retorna o intervalo da semana atual (segunda-feira até domingo).
+    """
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())  # Segunda-feira
+    end_of_week = start_of_week + timedelta(days=6)  # Domingo
+    return start_of_week, end_of_week
+
+def obter_intervalo_mes_atual():
+    """
+    Retorna o intervalo do mês atual (primeiro dia até o último dia do mês).
+    """
+    today = timezone.now().date()
+    start_of_month = today.replace(day=1)
+    next_month = today.replace(day=28) + timedelta(days=4)  # Garante o próximo mês
+    end_of_month = next_month - timedelta(days=next_month.day)
+    return start_of_month, end_of_month
