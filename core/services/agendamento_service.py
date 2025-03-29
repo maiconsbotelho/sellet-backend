@@ -40,6 +40,8 @@ def verificar_disponibilidade(data, hora, profissional):
     """
     return not Agendamento.objects.filter(data=data, hora=hora, profissional=profissional).exists()
 
+from datetime import datetime
+
 def validar_agendamento(data, hora, profissional, cliente=None):
     """
     Valida os campos data e hora do agendamento:
@@ -47,6 +49,13 @@ def validar_agendamento(data, hora, profissional, cliente=None):
     - Verifica se o horário já está ocupado para o mesmo profissional.
     - Verifica se o horário já está ocupado para o cliente (caso o usuário seja cliente).
     """
+    if isinstance(data, str):
+        # Converte string para datetime.date
+        data = datetime.strptime(data, "%Y-%m-%d").date()
+    if isinstance(hora, str):
+        # Converte string para datetime.time
+        hora = datetime.strptime(hora, "%H:%M:%S").time()
+
     data_hora_agendamento = timezone.make_aware(
         datetime.combine(data, hora), timezone.get_current_timezone()
     )

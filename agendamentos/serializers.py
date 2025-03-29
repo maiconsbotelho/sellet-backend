@@ -21,4 +21,4 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         """
         Durante a criação, o campo `data_hora_agendamento` já está gerado durante a validação.
         """
-        return super().create(validar_agendamento)
+        return super().create(validated_data)
