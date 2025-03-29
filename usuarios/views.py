@@ -5,6 +5,8 @@ from .serializers import UserProfileSerializer
 from .permissions import IsAdmin, IsProfissional, IsCliente
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from core.services.usuario_service import obter_permissoes_usuario, obter_queryset_usuario
+
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -15,47 +17,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
 
     def get_permissions(self):
-        """
-        Define as permissões para as ações baseadas no tipo de usuário.
-        """
-        # Permitir que superusuários realizem qualquer ação
-        if self.request.user.is_superuser:
-            return []
-
-        if self.action == 'list':  # Visualizar todos os usuários
-            return [IsAdmin()]
-        
-        elif self.action == 'retrieve':  # Visualizar um usuário específico
-            return [IsAuthenticated()]  # Qualquer usuário autenticado pode visualizar seu próprio perfil
-
-        elif self.action in ['update', 'partial_update']:  # Editar um usuário
-            if self.request.user.tipo_usuario == 'administrador':
-                return [IsAdmin()]
-            elif self.request.user.tipo_usuario == 'profissional':
-                return [IsProfissional()]
-            elif self.request.user.tipo_usuario == 'cliente':
-                return [IsCliente()]
-
-        elif self.action == 'create':  # Criar um usuário
-            return [IsAdmin()]  # Somente administradores podem criar usuários
-
-        elif self.action == 'destroy':  # Deletar um usuário
-            return [IsAdmin()]  # Somente administradores podem deletar clientes ou profissionais
-
-        return super().get_permissions()
+        return obter_permissoes_usuario(self.request, self.action)
 
     def get_queryset(self):
-        """
-        Ajusta o queryset baseado no tipo de usuário autenticado.
-        Administradores veem todos os usuários, enquanto profissionais e clientes
-        veem apenas seus próprios perfis.
-        """
         user = self.request.user
-
-        # Permitir que superusuários vejam todos os usuários
-        if user.is_superuser:
+        if user.is_superuser or user.tipo_usuario == 'administrador':
             return UserProfile.objects.all()
-
-        if user.tipo_usuario == 'admin':
-            return UserProfile.objects.all()  # Administradores podem ver todos os usuários
-        return UserProfile.objects.filter(id=user.id)  # Profissionais e clientes veem apenas seus próprios perfis
+        return UserProfile.objects.filter(id=user.id)

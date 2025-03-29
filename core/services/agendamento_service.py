@@ -1,5 +1,6 @@
 from django.utils import timezone
 from datetime import datetime, timedelta
+from agendamentos.models import Agendamento
 
 def associar_cliente_profissional(serializer, user, cliente_id=None, profissional_id=None):
     """
@@ -22,6 +23,44 @@ def associar_cliente_profissional(serializer, user, cliente_id=None, profissiona
 
     else:
         raise ValueError("Apenas administradores, profissionais e clientes podem criar agendamentos.")
+    
+
+@staticmethod
+def pode_cancelar_agendamento(agendamento):
+    """
+    Verifica se o agendamento pode ser cancelado.
+    O cancelamento é permitido até 24h antes do agendamento.
+    """
+    return agendamento.data_hora_agendamento > timezone.now() + timedelta(hours=24)
+
+
+def verificar_disponibilidade(data, hora, profissional):
+    """
+    Verifica se o profissional já tem um agendamento no mesmo dia e horário.
+    """
+    return not Agendamento.objects.filter(data=data, hora=hora, profissional=profissional).exists()
+
+def validar_agendamento(data, hora, profissional, cliente=None):
+    """
+    Valida os campos data e hora do agendamento:
+    - Verifica se a data e hora do agendamento são no futuro.
+    - Verifica se o horário já está ocupado para o mesmo profissional.
+    - Verifica se o horário já está ocupado para o cliente (caso o usuário seja cliente).
+    """
+    data_hora_agendamento = timezone.make_aware(
+        datetime.combine(data, hora), timezone.get_current_timezone()
+    )
+
+    if data_hora_agendamento <= timezone.localtime():
+        raise ValueError("A data e hora do agendamento devem ser no futuro.")
+
+    if not verificar_disponibilidade(data, hora, profissional):
+        raise ValueError("Esse horário já está ocupado para o profissional. Escolha outro horário.")
+        
+    if cliente and Agendamento.objects.filter(cliente=cliente, data_hora_agendamento=data_hora_agendamento).exists():
+        raise ValueError("Esse horário já está ocupado para o cliente. Escolha outro horário.")
+
+    return data_hora_agendamento
 
 def calcular_data_hora_agendamento(data, hora):
     """

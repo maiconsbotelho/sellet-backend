@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Agendamento
 from .serializers import AgendamentoSerializer
 from usuarios.permissions import IsProfissionalOrAdmin
-from core.services.agendamento_service import associar_cliente_profissional
+from core.services.agendamento_service import associar_cliente_profissional, verificar_disponibilidade, validar_agendamento, pode_cancelar_agendamento
 
-from .models import Agendamento
+
 
 
 
@@ -30,7 +30,7 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 
         try:
             # Valida a data e hora do agendamento usando o método de classe do modelo
-            data_hora_agendamento = Agendamento.validar_agendamento(
+            data_hora_agendamento = validar_agendamento(
                 data, hora, profissional_id, cliente_id
             )
 
@@ -54,7 +54,7 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
         Valida se o agendamento pode ser cancelado.
         O cancelamento só pode ser feito até 24h antes do agendamento.
         """
-        if not Agendamento.pode_cancelar_agendamento(instance):
+        if not pode_cancelar_agendamento(instance):
             return Response(
                 {"detail": "O cancelamento só pode ser feito até 24h antes do agendamento."},
                 status=status.HTTP_400_BAD_REQUEST

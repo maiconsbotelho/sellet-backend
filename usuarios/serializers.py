@@ -1,17 +1,13 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import UserProfile
+from core.services.usuario_service import adicionar_informacoes_ao_token
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
-        # Adicione informações extras ao token
-        token['email'] = user.email
-        token['tipo_usuario'] = user.tipo_usuario
-        token['username'] = user.username  # Inclua o username, se necessário
-        return token
+        return adicionar_informacoes_ao_token(token, user)
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

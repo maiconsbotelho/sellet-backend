@@ -4,6 +4,12 @@ from datetime import datetime, timedelta
 from usuarios.models import UserProfile
 from agendamentos.models import Agendamento
 from servicos.models import Servico
+from core.services.agendamento_service import (
+    associar_cliente_profissional,
+    verificar_disponibilidade,
+    validar_agendamento,
+    pode_cancelar_agendamento
+)
 
 @pytest.fixture
 def setup_data(db):
@@ -41,7 +47,7 @@ def test_validar_agendamento_sucesso(setup_data):
     Testa se um agendamento válido é aceito.
     """
     cliente, profissional, servico, data, hora = setup_data
-    data_hora = Agendamento.validar_agendamento(data, hora, profissional, cliente)
+    data_hora = validar_agendamento(data, hora, profissional, cliente)
     assert data_hora.date() == data
     assert data_hora.time() == hora
 
@@ -52,7 +58,7 @@ def test_validar_agendamento_data_passada(setup_data):
     cliente, profissional, servico, _, hora = setup_data
     data_passada = timezone.now().date() - timedelta(days=1)
     with pytest.raises(ValueError, match="A data e hora do agendamento devem ser no futuro."):
-        Agendamento.validar_agendamento(data_passada, hora, profissional, cliente)
+        validar_agendamento(data_passada, hora, profissional, cliente)
 
 def test_validar_agendamento_horario_ocupado_profissional(setup_data):
     """
@@ -65,25 +71,29 @@ def test_validar_agendamento_horario_ocupado_profissional(setup_data):
         servico=servico,
         data=data,
         hora=hora,
-        data_hora_agendamento=Agendamento.validar_agendamento(data, hora, profissional, cliente)
+        data_hora_agendamento=validar_agendamento(data, hora, profissional, cliente)
     )
     with pytest.raises(ValueError, match="Esse horário já está ocupado para o profissional. Escolha outro horário."):
-        Agendamento.validar_agendamento(data, hora, profissional, cliente)
+        validar_agendamento(data, hora, profissional, cliente)
 
 def test_pode_cancelar_agendamento(setup_data):
     """
     Testa se o cancelamento é permitido até 24 horas antes do agendamento.
     """
-    cliente, profissional, servico, data, hora = setup_data
+    cliente, profissional, servico, _, _ = setup_data
+    data = timezone.now().date() + timedelta(days=2)  # Agendamento no futuro
+    hora = (timezone.now() + timedelta(hours=2)).time()  # Hora no futuro para evitar problemas de arredondamento
+
     agendamento = Agendamento(
         cliente=cliente,
         profissional=profissional,
         servico=servico,
         data=data,
         hora=hora,
-        data_hora_agendamento=Agendamento.validar_agendamento(data, hora, profissional, cliente)
+        data_hora_agendamento=validar_agendamento(data, hora, profissional, cliente)
     )
-    assert agendamento.pode_cancelar_agendamento() is True
+    
+    assert pode_cancelar_agendamento(agendamento) is True
 
 def test_nao_pode_cancelar_agendamento(setup_data):
     """
@@ -99,20 +109,21 @@ def test_nao_pode_cancelar_agendamento(setup_data):
         hora=data_hora_proxima.time(),
         data_hora_agendamento=data_hora_proxima
     )
-    assert agendamento.pode_cancelar_agendamento() is False
+    assert pode_cancelar_agendamento(agendamento) is False
 
 def test_verificar_disponibilidade(setup_data):
     """
     Testa se a função verifica corretamente a disponibilidade do profissional.
     """
     cliente, profissional, servico, data, hora = setup_data
-    assert Agendamento.verificar_disponibilidade(data, hora, profissional) is True
+    assert verificar_disponibilidade(data, hora, profissional) is True
     Agendamento.objects.create(
         cliente=cliente,
         profissional=profissional,
         servico=servico,
         data=data,
         hora=hora,
-        data_hora_agendamento=Agendamento.validar_agendamento(data, hora, profissional, cliente)
+        data_hora_agendamento=validar_agendamento(data, hora, profissional, cliente)
     )
-    assert Agendamento.verificar_disponibilidade(data, hora, profissional) is False
+    assert verificar_disponibilidade(data, hora, profissional) is False
+

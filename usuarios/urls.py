@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import UserProfileViewSet, CustomTokenObtainPairView
 
 router = DefaultRouter()
-router.register(r'', UserProfileViewSet)
+router.register(r'', UserProfileViewSet, basename='userprofile')
 
 urlpatterns = [
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint de login
