@@ -38,7 +38,7 @@ def obter_queryset_usuario(user):
     
     if user.is_superuser:
         return UserProfile.objects.all()
-    if user.tipo_usuario == 'admin':
+    if user.tipo_usuario == 'administrador':
         return UserProfile.objects.all()
     return UserProfile.objects.filter(id=user.id)
 

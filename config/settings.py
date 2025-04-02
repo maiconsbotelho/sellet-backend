@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -160,3 +161,26 @@ REST_FRAMEWORK = {
     ),
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=48),  # Tempo de validade do token de acesso (12 horas)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),   # Tempo de validade do token de atualização (7 dias)
+    'ROTATE_REFRESH_TOKENS': False,               # Não rotacionar o token de atualização
+    'BLACKLIST_AFTER_ROTATION': True,             # Blacklist após rotação (se ativado)
+    'ALGORITHM': 'HS256',                         # Algoritmo de assinatura
+    'SIGNING_KEY': SECRET_KEY,                    # Chave de assinatura
+    'AUTH_HEADER_TYPES': ('Bearer',),             # Tipo de cabeçalho de autenticação
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
