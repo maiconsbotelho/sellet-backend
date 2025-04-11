@@ -16,15 +16,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['tipo_usuario'] = user.tipo_usuario
         return data
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=False)
 
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['id', 'username', 'email', 'password', 'telefone', 'foto_perfil', 'tipo_usuario', 'data_nascimento', 'endereco']
+        fields = [
+            'id','username', 'first_name', 'last_name', 'email', 'password', 'cpf', 'telefone',
+            'tipo_usuario', 'data_nascimento', 'foto_perfil', 'endereco',
+            'cep', 'uf', 'cidade', 'bairro', 'rua', 'numero'
+        ]
+        extra_kwargs = {'password': {'write_only': True}}
 
-
-
-def perform_create(self, serializer):
-    user = UserProfile.objects.create_user(**serializer.validated_data)
-    return user
+    def create(self, validated_data):
+        user = UserProfile.objects.create_user(**validated_data)
+        return user

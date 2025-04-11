@@ -6,7 +6,7 @@ from core.services.agendamento_service import (
     verificar_disponibilidade,
     validar_agendamento,
     associar_cliente_profissional
-)
+) 
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     data_hora_agendamento = serializers.DateTimeField(required=False, read_only=True)
@@ -15,6 +15,16 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         model = Agendamento
         fields = '__all__'
 
+
+    def validate(self, data):
+        # Verifica se o horário está disponível
+        profissional = data.get("profissional")
+        data_agendamento = data.get("data")
+        hora_agendamento = data.get("hora")
+
+        if Agendamento.objects.filter(profissional=profissional, data=data_agendamento, hora=hora_agendamento).exists():
+            raise serializers.ValidationError("O horário selecionado não está disponível.")
+        return data
 
 
     def create(self, validated_data):

@@ -6,6 +6,8 @@ class Servico(models.Model):
     descricao = models.TextField()
     duracao = models.IntegerField(help_text="Duração do serviço em minutos")
     preco = models.DecimalField(max_digits=8, decimal_places=2)  # Preço do serviço
+    qtde_slots = models.IntegerField(default=1, help_text="Quantidade de slots disponíveis para o serviço")
+    imagem_url = models.URLField(max_length=255, blank=True, null=True, help_text="URL da imagem do serviço")
     profissionais = models.ManyToManyField(
         UserProfile,
         related_name="servicos_oferecidos",

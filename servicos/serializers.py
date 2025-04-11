@@ -10,4 +10,6 @@ class ServicoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Servico
-        fields = ['id', 'nome', 'descricao', 'duracao', 'preco', 'profissionais']
+        fields = [
+            'id', 'nome', 'descricao', 'duracao', 'preco', 'qtde_slots', 'imagem_url', 'profissionais'
+        ]

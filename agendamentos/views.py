@@ -8,7 +8,7 @@ from usuarios.permissions import IsProfissionalOrAdmin
 from core.services.agendamento_service import associar_cliente_profissional, verificar_disponibilidade, validar_agendamento, pode_cancelar_agendamento
 
 
-
+ 
 
 
 class AgendamentoViewSet(viewsets.ModelViewSet):
